@@ -1,0 +1,42 @@
+name: "Build Debug APK"
+
+on:
+  pull_request:
+    branches:
+      - dev
+      - test
+  push:
+    branches:
+      - dev
+      - test
+
+jobs:  
+  build:      
+    runs-on: macos-latest 
+
+    steps:
+      # 1. Checkout Repository
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      # 2. Setup Flutter
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.22.2'
+          channel: 'stable'
+
+      # 3. Install Dependencies
+      - name: Install Dependencies
+        run: flutter pub get
+
+      # 4. Build Debug APK
+      - name: Build Debug APK
+        run: flutter build apk --debug
+
+      # 5. Upload Debug APK
+      - name: Upload Debug APK
+        uses: actions/upload-artifact@v2
+        with:
+          name: Debug APK
+          path: build/app/outputs/flutter-apk/app-debug.apk
